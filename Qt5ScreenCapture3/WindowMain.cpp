@@ -1,6 +1,8 @@
 #include <QPainter>
+#include <QTimer>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
 #include <QGuiApplication>
-#include <QOpenGLFunctions>
 #include <QScreen>
 #include <QMouseEvent>
 #include <QPainterPath>
@@ -24,10 +26,13 @@ WindowMain::WindowMain() : QOpenGLWindow()
     show();
     //注意 必须先重置大小，再设置缩放比例
     auto hwnd = (HWND)winId();
-    SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    SetWindowPos(hwnd, HWND_TOP, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
     //注意 这里必须用窗口的dpr来设置img的dpr，不能用主屏的dpr，此操作必须最后执行
     auto dpr = devicePixelRatio();
     img.setDevicePixelRatio(dpr);
+    SetForegroundWindow(hwnd);
+    SetFocus(hwnd);
+    SetActiveWindow(hwnd);
 }
 
 WindowMain::~WindowMain()
@@ -50,15 +55,35 @@ void WindowMain::printScreen()
     ReleaseDC(NULL, hScreen);
 }
 
+void WindowMain::initializeGL()
+{
+    initializeOpenGLFunctions();
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_BLEND);
+    //QSurfaceFormat format;
+    //format.setRenderableType(QSurfaceFormat::OpenGL);
+    //format.setVersion(4, 5); 
+    //format.setProfile(QSurfaceFormat::CoreProfile);
+    //format.setSwapInterval(100);
+    //format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    //setFormat(format);
+
+}
+
 void WindowMain::paintGL()
 {
-    QOpenGLPaintDevice paintDevice(w, h);
-    paintDevice.setDevicePixelRatio(img.devicePixelRatio());
-    QPainter painter;
-    painter.begin(&paintDevice);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.drawImage(QPoint(0, 0), img);
+    glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    QPainter painter(this);
+    painter.beginNativePainting();
+    //painter.setRenderHint(QPainter::Antialiasing, true);
+    //painter.drawImage(QPoint(0, 0), img);
     painter.setBrush(QColor(0, 0, 0, 120));
     QPainterPath path;
     path.addRect(-1, -1, w + 1, h + 1);
@@ -68,8 +93,9 @@ void WindowMain::paintGL()
     painter.setPen(QPen(QBrush(borderColor), 2));
     painter.setBrush(Qt::NoBrush);
     painter.drawRect(rectMask);
-
-    painter.end();
+    painter.endNativePainting();
+	painter.end();
+	this->frameSwapped();
 }
 
 void WindowMain::mousePressEvent(QMouseEvent* event)
@@ -90,6 +116,15 @@ void WindowMain::mouseMoveEvent(QMouseEvent* event)
         auto pos = event->pos();
         rectMask.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
         rectMask = rectMask.normalized();
-        update();
+        paintGL();
+		update();
     }
+}
+
+void WindowMain::showEvent(QShowEvent* event)
+{
+    QOpenGLWindow::showEvent(event);
+    QTimer::singleShot(60, this, SLOT(paintGL()));
+    QTimer::singleShot(80, this, SLOT(paintGL()));
+    QTimer::singleShot(100, this, SLOT(paintGL()));
 }
