@@ -23,7 +23,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="Qt5ScreenCapture3.qrc">
+    <QtRcc Include="FullScreenGL.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
   </ItemGroup>
