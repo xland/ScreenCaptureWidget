@@ -17,8 +17,8 @@ WindowMain::WindowMain() : QOpenGLWindow()
 	rectMask = QRect(0, 0, 0, 0);
     x = GetSystemMetrics(SM_XVIRTUALSCREEN);
     y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    w = GetSystemMetrics(SM_CXVIRTUALSCREEN) - 0.5;  //必须小一点，不然第二次update时会出现黑屏闪烁
-    h = GetSystemMetrics(SM_CYVIRTUALSCREEN) - 0.5;
+    w = GetSystemMetrics(SM_CXVIRTUALSCREEN)+1;  //必须大一点，不然第二次update时会出现黑屏闪烁
+    h = GetSystemMetrics(SM_CYVIRTUALSCREEN)+1;
 
     printScreen();
     //注意 必须先设置大小并显示窗口后，再使用原生API重置大小
@@ -27,7 +27,7 @@ WindowMain::WindowMain() : QOpenGLWindow()
     show();
     //注意 必须先重置大小，再设置缩放比例
     auto hwnd = (HWND)winId();
-    SetWindowPos(hwnd, HWND_TOP, x, y, w, h, SWP_NOZORDER);  //| SWP_SHOWWINDOW
+    SetWindowPos(hwnd, NULL, x, y, w, h, SWP_NOACTIVATE | SWP_SHOWWINDOW);  //HWND_TOPMOST
     //注意 这里必须用窗口的dpr来设置img的dpr，不能用主屏的dpr，此操作必须最后执行
     auto dpr = devicePixelRatio();
     img.setDevicePixelRatio(dpr);

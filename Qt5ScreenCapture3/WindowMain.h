@@ -1,25 +1,27 @@
-#pragma once
-#include <Windows.h>
-#include <QWidget>
-#include <QImage>
+﻿#pragma once
 
-class WindowMain  : public QWidget
+#include <Windows.h>
+#include <QOpenGLWindow>
+#include <QImage>
+#include <QOpenGLPaintDevice>
+#include <QOpenGLTexture>
+
+class WindowMain : public QOpenGLWindow
 {
 	Q_OBJECT
 
 public:
-	WindowMain(QWidget* parent = nullptr);
+	WindowMain();
 	~WindowMain();
 protected:
-	void paintEvent(QPaintEvent* event) override;
+	void paintGL() override;
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
-
 private:
 	void printScreen();
 	void draw100Rect(QPainter& painter);
-	int x, y, w, h;
+	float x, y, w, h;
 	QImage img;
 	bool isPressed = false;
 	QPoint posPress;
