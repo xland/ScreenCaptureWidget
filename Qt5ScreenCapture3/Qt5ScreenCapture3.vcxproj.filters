@@ -23,6 +23,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <QtRcc Include="Qt5ScreenCapture3.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -34,8 +39,5 @@
     <QtMoc Include="WindowMain.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.md" />
   </ItemGroup>
 </Project>

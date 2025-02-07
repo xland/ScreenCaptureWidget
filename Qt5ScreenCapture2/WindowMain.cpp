@@ -3,6 +3,8 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include <QWindow>
+#include <QMouseEvent>
+#include <QPainterPath>
 #include "WindowMain.h"
 
 WindowMain::WindowMain(QWidget* parent) : QWidget(parent)
@@ -13,23 +15,25 @@ WindowMain::WindowMain(QWidget* parent) : QWidget(parent)
     w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     printScreen();
-    //×¢Òâ ±ØÐëÏÈÉèÖÃ´óÐ¡²¢ÏÔÊ¾´°¿Úºó£¬ÔÙÊ¹ÓÃÔ­ÉúAPIÖØÖÃ´óÐ¡
+    //æ³¨æ„ å¿…é¡»å…ˆè®¾ç½®å¤§å°å¹¶æ˜¾ç¤ºçª—å£åŽï¼Œå†ä½¿ç”¨åŽŸç”ŸAPIé‡ç½®å¤§å°
     setFixedSize(w, h);
     show();
-    //×¢Òâ ±ØÐëÏÈÖØÖÃ´óÐ¡£¬ÔÙÉèÖÃËõ·Å±ÈÀý
+    //æ³¨æ„ å¿…é¡»å…ˆé‡ç½®å¤§å°ï¼Œå†è®¾ç½®ç¼©æ”¾æ¯”ä¾‹
     auto hwnd = (HWND)winId();
     SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
-    //×¢Òâ ÕâÀï±ØÐëÓÃ´°¿ÚµÄdprÀ´ÉèÖÃimgµÄdpr£¬²»ÄÜÓÃÖ÷ÆÁµÄdpr£¬´Ë²Ù×÷±ØÐë×îºóÖ´ÐÐ
+    //æ³¨æ„ è¿™é‡Œå¿…é¡»ç”¨çª—å£çš„dpræ¥è®¾ç½®imgçš„dprï¼Œä¸èƒ½ç”¨ä¸»å±çš„dprï¼Œæ­¤æ“ä½œå¿…é¡»æœ€åŽæ‰§è¡Œ
     auto dpr = windowHandle()->devicePixelRatio();
     img.setDevicePixelRatio(dpr);
 }
 
 WindowMain::~WindowMain()
-{}
+{
+    
+}
 
 void WindowMain::printScreen()
 {
-    //Ê¹ÓÃQt APIÎªÆÁÄ»ÅÄÕÕÒà¿É
+    //ä½¿ç”¨Qt APIä¸ºå±å¹•æ‹ç…§äº¦å¯
     HDC hScreen = GetDC(NULL);
     HDC hDC = CreateCompatibleDC(hScreen);
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
@@ -48,4 +52,37 @@ void WindowMain::paintEvent(QPaintEvent* event)
     QWidget::paintEvent(event);
     QPainter painter(this);
     painter.drawImage(QPoint(0, 0), img);
+
+
+    painter.setBrush(QColor(0, 0, 0, 120));
+    QPainterPath path;
+    path.addRect(-1, -1, w + 1, h + 1);
+    path.addRect(rectMask);
+    painter.drawPath(path);
+    QColor borderColor(22, 118, 255);
+    painter.setPen(QPen(QBrush(borderColor), 2));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(rectMask);
+}
+
+void WindowMain::mousePressEvent(QMouseEvent* event)
+{
+	isPressed = true;
+    posPress = event->pos();
+}
+
+void WindowMain::mouseReleaseEvent(QMouseEvent* event)
+{
+	isPressed = false;
+}
+
+void WindowMain::mouseMoveEvent(QMouseEvent* event)
+{
+    if (isPressed)
+    {
+        auto pos = event->pos();
+        rectMask.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
+        rectMask = rectMask.normalized();
+        update();
+    }
 }

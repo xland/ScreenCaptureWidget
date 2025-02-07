@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Qt5ScreenCapture3", "Qt5ScreenCapture3.vcxproj", "{75176518-4CF1-47A4-B540-4847BC1AC9AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75176518-4CF1-47A4-B540-4847BC1AC9AF}.Debug|x86.ActiveCfg = Debug|Win32
+		{75176518-4CF1-47A4-B540-4847BC1AC9AF}.Debug|x86.Build.0 = Debug|Win32
+		{75176518-4CF1-47A4-B540-4847BC1AC9AF}.Release|x86.ActiveCfg = Release|Win32
+		{75176518-4CF1-47A4-B540-4847BC1AC9AF}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
