@@ -16,6 +16,7 @@
 // 注意：必须使用QOpenGLWindow，不能使用QOpenGLWideget
 WindowMain::WindowMain() : QOpenGLWindow()
 {
+    qDebug() << "WindowMain";
     setFlags(Qt::FramelessWindowHint | Qt::Window);
 	rectMask = QRect(0, 0, 0, 0);
     x = GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -35,6 +36,8 @@ WindowMain::WindowMain() : QOpenGLWindow()
     auto dpr = devicePixelRatio();
     img.setDevicePixelRatio(dpr);
 	//enableAlphaCompositing(hwnd);
+
+    qDebug() << "WindowMain!!!";
 }
 
 WindowMain::~WindowMain()
@@ -90,10 +93,11 @@ void WindowMain::printScreen()
 
 void WindowMain::paintGL()
 {
+    qDebug() << "WindowMain  paintGL";
  //   QOpenGLPaintDevice device(QSize(w,h));
 	//device.setDevicePixelRatio(devicePixelRatio());
     QPainter painter(this);
-
+    qDebug()<< painter.isActive();
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.drawImage(QPoint(0, 0), img);
     painter.setBrush(QColor(0, 0, 0, 120));
