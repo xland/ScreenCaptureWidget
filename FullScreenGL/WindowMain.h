@@ -20,6 +20,7 @@ protected:
 	void mouseMoveEvent(QMouseEvent* event) override;
 private:
 	void printScreen();
+	bool enableAlphaCompositing(HWND hWnd);
 	float x, y, w, h;
 	QImage img;
 	bool isPressed = false;

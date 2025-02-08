@@ -6,6 +6,9 @@
 #include <QScreen>
 #include <QMouseEvent>
 #include <QPainterPath>
+#include <d2d1.h>
+#include <dwmapi.h>
+#include <versionhelpers.h>
 #include <QWindow>
 #include "WindowMain.h"
 
@@ -31,10 +34,42 @@ WindowMain::WindowMain() : QOpenGLWindow()
     //注意 这里必须用窗口的dpr来设置img的dpr，不能用主屏的dpr，此操作必须最后执行
     auto dpr = devicePixelRatio();
     img.setDevicePixelRatio(dpr);
+	//enableAlphaCompositing(hwnd);
 }
 
 WindowMain::~WindowMain()
 {
+}
+
+bool WindowMain::enableAlphaCompositing(HWND hWnd)
+{
+    if (!IsWindowsVistaOrGreater()) { return false; }
+    BOOL isCompositionEnable = false;
+    //检查DWM是否启用
+    DwmIsCompositionEnabled(&isCompositionEnable);
+    if (!isCompositionEnable) { return true; }
+    DWORD currentColor = 0;
+    BOOL isOpaque = false;
+    //检查是否支持毛玻璃效果
+    DwmGetColorizationColor(&currentColor, &isOpaque);
+    if (!isOpaque || IsWindows8OrGreater())
+    {
+        HRGN region = CreateRectRgn(0, 0, -1, -1);
+        DWM_BLURBEHIND bb = { 0 };
+        bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
+        bb.hRgnBlur = region;
+        bb.fEnable = TRUE;
+        DwmEnableBlurBehindWindow(hWnd, &bb);
+        DeleteObject(region);
+        return true;
+    }
+    else // For Window7
+    {
+        DWM_BLURBEHIND bb = { 0 };
+        bb.dwFlags = DWM_BB_ENABLE;
+        DwmEnableBlurBehindWindow(hWnd, &bb);
+        return false;
+    }
 }
 
 void WindowMain::printScreen()
@@ -55,13 +90,12 @@ void WindowMain::printScreen()
 
 void WindowMain::paintGL()
 {
-    QOpenGLPaintDevice device(QSize(w,h));
-	device.setDevicePixelRatio(devicePixelRatio());
-    QPainter painter(&device);
+ //   QOpenGLPaintDevice device(QSize(w,h));
+	//device.setDevicePixelRatio(devicePixelRatio());
+    QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.drawImage(QPoint(0, 0), img);
-
     painter.setBrush(QColor(0, 0, 0, 120));
     QPainterPath path;
     path.addRect(-1, -1, w + 1, h + 1);
