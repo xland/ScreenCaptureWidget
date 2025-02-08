@@ -13,6 +13,10 @@ int main(int argc, char *argv[])
     //        qputenv("QT_OPENGL", "software");
     //    }
     //}
+
+    qputenv("QT_OPENGL", "angle");
+    qputenv("QT_ANGLE_PLATFORM", "d3d11");
+
     WindowMain w;
     w.show();
     return a.exec();
