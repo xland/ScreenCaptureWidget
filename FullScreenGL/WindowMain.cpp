@@ -93,11 +93,11 @@ void WindowMain::printScreen()
 
 void WindowMain::paintGL()
 {
-    qDebug() << "WindowMain  paintGL";
+    //qDebug() << "WindowMain  paintGL";
  //   QOpenGLPaintDevice device(QSize(w,h));
 	//device.setDevicePixelRatio(devicePixelRatio());
     QPainter painter(this);
-    qDebug()<< painter.isActive();
+    //qDebug()<< painter.isActive();
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.drawImage(QPoint(0, 0), img);
     painter.setBrush(QColor(0, 0, 0, 120));
